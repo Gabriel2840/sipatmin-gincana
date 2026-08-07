@@ -43,7 +43,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 
 <section id="ranking" class="section"><div class="grid two"><div class="card"><h2>Ranking geral por índice proporcional</h2><div id="rankingBox" class="rank"></div></div><div class="card"><h2>Composição dos grupos</h2><div id="gruposBox"></div><h2>Pontos por categoria</h2><div id="catBox"></div></div></div></section>
 
-<section id="aprovacoes" class="section"><div class="card"><h2>Central de aprovação</h2><div id="aprovacoesBox"></div></div></section>
+<section id="aprovacoes" class="section"><div class="card"><h2>Central de aprovação <button class="navy admin-only" style="float:right" onclick="baixarHistorico()">⬇ Baixar histórico (CSV)</button></h2><div id="aprovacoesBox"></div></div></section>
 
 <section id="usuarios" class="section"><div class="grid two"><div class="card"><h2>Cadastrar usuários e senhas</h2><form id="formUsuario"><label><span>Nome completo</span><input id="uNome" required placeholder="Nome do líder ou administrador"></label><label><span>Login</span><input id="uLogin" required placeholder="Ex.: lider.azul"></label><label><span>Senha</span><input id="uSenha" required type="password" minlength="6" placeholder="Crie uma senha"></label><label><span>Perfil</span><select id="uPerfil"><option value="lider">Líder da equipe</option><option value="admin">Administrador</option></select></label><label><span>Grupo base</span><select id="uGrupo"><option>Beneficiamento e seus parceiros</option><option>Mina e seus parceiros</option><option>GAF, PCP, RH & Facilities, SSMA e Serviços Técnicos</option></select></label><label><span>Nome do time</span><input id="uTime" required placeholder="Ex.: Guardiões do Ouro"></label><button class="primary full" type="submit">Cadastrar usuário</button></form><p class="small">Os acessos valem para todos os aparelhos: os dados ficam num banco compartilhado e as senhas protegidas no Supabase Auth (ninguém consegue vê-las).</p></div><div class="card"><h2>Usuários cadastrados</h2><div id="usuariosBox"></div></div></div></section>
 
@@ -237,6 +237,22 @@ window.reprovar=async function(id){
   const {error}=await supa.from('sg_envios').update({status:'reprovada',motivo}).eq('id',id);
   if(error) return alert('Falha ao reprovar: '+error.message);
   await carregar();
+};
+window.baixarHistorico=function(){
+  if(!usuarioAtual||usuarioAtual.perfil!=='admin') return alert('Apenas o administrador pode baixar o histórico.');
+  if(!envios.length) return alert('Ainda não há envios registrados.');
+  // CSV no padrão do Excel brasileiro: separador ";" e BOM UTF-8
+  const cel=v=>{v=(v==null?'':String(v));return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const cab=['Enviado em','Grupo','Time','Enviado por','Categoria','Atividade','Quantidade','Pontos','Data da atividade','Local','Responsável','Fotos','Arquivos','SharePoint','Status','Motivo'];
+  const linhas=envios.slice().sort((a,b)=>a.ts-b.ts).map(e=>[
+    new Date(e.ts).toLocaleString('pt-BR'),e.grupo,e.time,e.usuario,e.categoria,e.atividade,e.quantidade,e.total,
+    e.data||'',e.local||'',e.responsavel||'',(e.evidencias||[]).length,(e.arquivos||[]).join(' | '),e.sharepoint||'',e.status,e.motivo||''
+  ].map(cel).join(';'));
+  const csv='﻿'+cab.join(';')+'\n'+linhas.join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='sipatmin-historico-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
 };
 
 // ---------- ranking e telas ----------
