@@ -39,9 +39,9 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 
 <section id="dashboard" class="section active"><div class="grid metrics"><div class="card metric"><div class="label">Pontuação aprovada</div><div id="mPontos" class="value">0</div></div><div class="card metric"><div class="label">Índice proporcional</div><div id="mIndice" class="value">0</div></div><div class="card metric"><div class="label">Posição</div><div id="mPos" class="value">-</div></div><div class="card metric"><div class="label">Aguardando validação</div><div id="mPend" class="value">0</div></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Ranking proporcional</h2><div id="homeRank" class="rank"></div></div><div class="card"><h2>Dados do acesso</h2><div id="meuAcesso" class="note"></div><h2>Últimas atividades</h2><div id="ultimas"></div></div></div></section>
 
-<section id="nova" class="section"><div class="grid two"><div class="card"><h2>Registrar atividade</h2><form id="formAtividade"><label><span>Categoria</span><select id="categoria" onchange="carregarAtividades()"></select></label><label><span>Atividade</span><select id="atividade" onchange="atualizarCalculo()"></select></label><label class="full"><span>Descrição</span><textarea id="descricao" required placeholder="Descreva a ação realizada e o resultado obtido"></textarea></label><label><span>Quantidade</span><input id="quantidade" type="number" min="1" value="1" oninput="atualizarCalculo()"></label><label><span>Data</span><input id="data" type="date" required></label><label><span>Local</span><input id="local" required placeholder="Ex.: Mina, Beneficiamento, Administrativo"></label><label><span>Responsável</span><input id="responsavel" required placeholder="Nome do responsável"></label><label class="full"><span>Evidências</span><input id="evidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="sharepointLink" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviar">Enviar para validação</button></form></div><div class="calc"><div class="kicker">Pontuação automática</div><h2 id="calcNome">-</h2><p>Quantidade realizada x valor da atividade</p><div class="big" id="calcTotal">0</div><p id="calcDetalhe"></p><p style="color:#ffffffb8">A pontuação só entra no ranking após aprovação do administrador. No ranking, os pontos das atividades são divididos pelo efetivo do time e multiplicados por 100.</p></div></div></section>
+<section id="nova" class="section"><div class="grid two"><div class="card"><h2>Registrar atividade</h2><form id="formAtividade"><label><span>Categoria</span><select id="categoria" onchange="carregarAtividades()"></select></label><label><span>Atividade</span><select id="atividade" onchange="atualizarCalculo()"></select></label><label class="full"><span>Descrição</span><textarea id="descricao" required placeholder="Descreva a ação realizada e o resultado obtido"></textarea></label><label><span>Quantidade</span><input id="quantidade" type="number" min="1" value="1" oninput="atualizarCalculo()"></label><label><span>Data</span><input id="data" type="date" required></label><label><span>Local</span><input id="local" required placeholder="Ex.: Mina, Beneficiamento, Administrativo"></label><label><span>Responsável</span><input id="responsavel" required placeholder="Nome do responsável"></label><label class="full"><span>Evidências (fotos e vídeos de até 45 MB)</span><input id="evidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="sharepointLink" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviar">Enviar para validação</button></form></div><div class="calc"><div class="kicker">Pontuação automática</div><h2 id="calcNome">-</h2><p>Quantidade realizada x valor da atividade</p><div class="big" id="calcTotal">0</div><p id="calcDetalhe"></p><p style="color:#ffffffb8">A pontuação só entra no ranking após aprovação do administrador. No ranking, os pontos das atividades são divididos pelo efetivo do time e multiplicados por 100.</p></div></div></section>
 
-<section id="missoes" class="section"><div class="grid two"><div class="card"><h2>Enviar missão</h2><form id="formMissao"><label class="full"><span>Missão</span><select id="missaoSel" onchange="atualizarMissaoInfo()"></select></label><label class="full"><span>Descrição da entrega</span><textarea id="mDescricao" required placeholder="Descreva o que a equipe entregou nesta missão"></textarea></label><label><span>Data</span><input id="mData" type="date" required></label><label><span>Responsável</span><input id="mResponsavel" required placeholder="Nome do responsável"></label><label id="mPartWrap" class="full hidden"><span>Quantas pessoas participaram do DDS?</span><input id="mParticipantes" type="number" min="1" value="1"></label><label class="full"><span>Evidências</span><input id="mEvidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="mSharepoint" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviarMissao">Enviar missão para validação</button></form></div><div class="calc"><div class="kicker">Pontuação da missão</div><h2 id="missaoNome">-</h2><p id="missaoRegra" style="color:#ffffffd9"></p><div class="big">Nota</div><p>Nota por entrega + nota complementar, lançadas pelo administrador na aprovação. A soma entra no ranking geral e também aparece no placar de missões.</p></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Placar de missões por equipe</h2><div id="missoesRankBox"></div></div><div class="card"><h2>Regulamento das missões</h2><div id="missoesRegras"></div></div></div><div class="card" style="margin-top:16px"><h2>Missões enviadas</h2><div id="missoesEnvios"></div></div></section>
+<section id="missoes" class="section"><div class="grid two"><div class="card"><h2>Enviar missão</h2><form id="formMissao"><label class="full"><span>Missão</span><select id="missaoSel" onchange="atualizarMissaoInfo()"></select></label><label class="full"><span>Descrição da entrega</span><textarea id="mDescricao" required placeholder="Descreva o que a equipe entregou nesta missão"></textarea></label><label><span>Data</span><input id="mData" type="date" required></label><label><span>Responsável</span><input id="mResponsavel" required placeholder="Nome do responsável"></label><label id="mPartWrap" class="full hidden"><span>Quantas pessoas participaram do DDS?</span><input id="mParticipantes" type="number" min="1" value="1"></label><label class="full"><span>Evidências (fotos e vídeos de até 45 MB)</span><input id="mEvidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="mSharepoint" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviarMissao">Enviar missão para validação</button></form></div><div class="calc"><div class="kicker">Pontuação da missão</div><h2 id="missaoNome">-</h2><p id="missaoRegra" style="color:#ffffffd9"></p><div class="big">Nota</div><p>Nota por entrega + nota complementar, lançadas pelo administrador na aprovação. A soma entra no ranking geral e também aparece no placar de missões.</p></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Placar de missões por equipe</h2><div id="missoesRankBox"></div></div><div class="card"><h2>Regulamento das missões</h2><div id="missoesRegras"></div></div></div><div class="card" style="margin-top:16px"><h2>Missões enviadas</h2><div id="missoesEnvios"></div></div></section>
 
 <section id="ranking" class="section"><div class="grid two"><div class="card"><h2>Ranking geral por índice proporcional</h2><div id="rankingBox" class="rank"></div></div><div class="card"><h2>Composição dos grupos</h2><div id="gruposBox"></div><h2>Pontos por categoria</h2><div id="catBox"></div></div></div></section>
 
@@ -183,24 +183,43 @@ async function comprimir(file){
   return await new Promise(r=>c.toBlob(r,'image/jpeg',.8));
 }
 
+// sobe fotos (comprimidas) e vídeos (até 45 MB) para o bucket privado;
+// os demais arquivos ficam só com o nome (conteúdo vai pelo SharePoint)
+async function subirEvidencias(todos,id){
+  const prefixo=usuarioAtual.grupo.slice(0,4).toLowerCase().replace(/\W/g,'');
+  const urls=[];
+  const outros=todos.filter(f=>!f.type.startsWith('image/')&&!f.type.startsWith('video/')).map(f=>f.name);
+  const fotos=todos.filter(f=>f.type.startsWith('image/'));
+  const videos=todos.filter(f=>f.type.startsWith('video/'));
+  for(let i=0;i<fotos.length;i++){
+    const blob=await comprimir(fotos[i]);
+    const path=`${prefixo}/${id}/${i+1}.jpg`;
+    const up=await supa.storage.from('evidencias').upload(path,blob,{contentType:'image/jpeg'});
+    if(up.error) throw new Error('Falha no upload da foto '+(i+1)+': '+up.error.message);
+    urls.push(path);
+  }
+  for(let i=0;i<videos.length;i++){
+    const v=videos[i];
+    if(v.size>45*1024*1024) throw new Error('O vídeo "'+v.name+'" passa de 45 MB — comprima o vídeo ou cole o link dele no campo do SharePoint.');
+    const ext=((v.name.split('.').pop()||'mp4').toLowerCase().replace(/[^a-z0-9]/g,''))||'mp4';
+    const path=`${prefixo}/${id}/v${i+1}.${ext}`;
+    const up=await supa.storage.from('evidencias').upload(path,v,{contentType:v.type||'video/mp4'});
+    if(up.error) throw new Error('Falha no upload do vídeo '+(i+1)+': '+up.error.message);
+    urls.push(path);
+  }
+  return {urls,outros};
+}
+
 $('formAtividade').addEventListener('submit',async e=>{
   e.preventDefault();
   if(!usuarioAtual) return alert('Faça login primeiro.');
   const a=atividadeAtual();
   const todos=[...$('evidencia').files];
-  const files=todos.filter(f=>f.type.startsWith('image/'));          // fotos sobem para o placar
-  const outros=todos.filter(f=>!f.type.startsWith('image/')).map(f=>f.name); // demais ficam como nome (use o SharePoint)
   const btn=$('btnEnviar');btn.disabled=true;btn.textContent='Enviando…';
   try{
     const id=Date.now();
-    const urls=[]; // guarda o CAMINHO no bucket privado (só o admin gera o link de visualização)
-    for(let i=0;i<files.length;i++){
-      const blob=await comprimir(files[i]);
-      const path=`${usuarioAtual.grupo.slice(0,4).toLowerCase().replace(/\W/g,'')}/${id}/${i+1}.jpg`;
-      const up=await supa.storage.from('evidencias').upload(path,blob,{contentType:'image/jpeg'});
-      if(up.error) throw new Error('Falha no upload da foto '+(i+1)+': '+up.error.message);
-      urls.push(path);
-    }
+    // urls guarda o CAMINHO no bucket privado (só o admin gera o link de visualização)
+    const {urls,outros}=await subirEvidencias(todos,id);
     const envio={id,ts:id,uid:usuarioAtual.uid,grupo:usuarioAtual.grupo,time_nome:usuarioAtual.time,usuario:usuarioAtual.nome,
       categoria:a[0],atividade:a[1],quantidade:Number($('quantidade').value),total:Number($('quantidade').value)*a[2],
       data:$('data').value,local:$('local').value,responsavel:$('responsavel').value,descricao:$('descricao').value.trim(),
@@ -220,19 +239,10 @@ $('formMissao').addEventListener('submit',async e=>{
   if(!usuarioAtual) return alert('Faça login primeiro.');
   const m=missoes.find(x=>x[0]===$('missaoSel').value)||missoes[0];
   const todos=[...$('mEvidencia').files];
-  const files=todos.filter(f=>f.type.startsWith('image/'));
-  const outros=todos.filter(f=>!f.type.startsWith('image/')).map(f=>f.name);
   const btn=$('btnEnviarMissao');btn.disabled=true;btn.textContent='Enviando…';
   try{
     const id=Date.now();
-    const urls=[];
-    for(let i=0;i<files.length;i++){
-      const blob=await comprimir(files[i]);
-      const path=`${usuarioAtual.grupo.slice(0,4).toLowerCase().replace(/\W/g,'')}/${id}/${i+1}.jpg`;
-      const up=await supa.storage.from('evidencias').upload(path,blob,{contentType:'image/jpeg'});
-      if(up.error) throw new Error('Falha no upload da foto '+(i+1)+': '+up.error.message);
-      urls.push(path);
-    }
+    const {urls,outros}=await subirEvidencias(todos,id);
     const participantes=m[0].startsWith('Missão 02')?Math.max(1,Number($('mParticipantes').value||1)):1;
     const envio={id,ts:id,uid:usuarioAtual.uid,grupo:usuarioAtual.grupo,time_nome:usuarioAtual.time,usuario:usuarioAtual.nome,
       categoria:'Missões',atividade:m[0],quantidade:participantes,total:0,
@@ -311,7 +321,7 @@ window.baixarHistorico=function(){
   if(!envios.length) return alert('Ainda não há envios registrados.');
   // CSV no padrão do Excel brasileiro: separador ";" e BOM UTF-8
   const cel=v=>{v=(v==null?'':String(v));return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const cab=['Enviado em','Grupo','Time','Enviado por','Categoria','Atividade','Descrição','Quantidade','Pontos','Nota entrega','Nota complementar','Melhor vídeo','Data da atividade','Local','Responsável','Fotos','Arquivos','SharePoint','Status','Motivo'];
+  const cab=['Enviado em','Grupo','Time','Enviado por','Categoria','Atividade','Descrição','Quantidade','Pontos','Nota entrega','Nota complementar','Melhor vídeo','Data da atividade','Local','Responsável','Fotos/Vídeos','Arquivos','SharePoint','Status','Motivo'];
   const linhas=envios.slice().sort((a,b)=>a.ts-b.ts).map(e=>[
     new Date(e.ts).toLocaleString('pt-BR'),e.grupo,e.time,e.usuario,e.categoria,e.atividade,e.descricao||'',e.quantidade,e.total,
     e.nota_entrega??'',e.nota_complementar??'',e.melhor_video?'Sim (+50)':'',
@@ -336,7 +346,7 @@ function evHtml(e,admin){
   const sp=e.sharepoint?`<br><a href="${esc(e.sharepoint)}" target="_blank">SharePoint</a>`:'';
   const extras=(nomes?'<br>'+nomes:'')+sp;
   if(!n) return (nomes||'')+(sp||(nomes?'':'-'));
-  if(!admin) return `🔒 ${n} foto(s) — visível só para o administrador`+extras;
+  if(!admin) return `🔒 ${n} arquivo(s) — visível só para o administrador`+extras;
   // admin: os slots são preenchidos com URLs assinadas logo após o render
   return (e.evidencias||[]).map(p=>`<span class="ev-slot" data-path="${esc(p)}">🔄</span>`).join('')+extras;
 }
@@ -350,8 +360,10 @@ async function assinarEvidencias(){
   const mapa={}; data.forEach(d=>{ if(d.signedUrl) mapa[d.path]=d.signedUrl; });
   slots.forEach(s=>{
     const u=mapa[s.dataset.path];
-    if(u) s.outerHTML=`<a href="${esc(u)}" target="_blank"><img class="thumb" src="${esc(u)}" alt="evidência"></a>`;
-    else s.textContent='—';
+    if(!u){ s.textContent='—'; return; }
+    // fotos viram miniatura; vídeos viram link para assistir (link assinado, 1 h)
+    if(/\.jpe?g$/i.test(s.dataset.path)) s.outerHTML=`<a href="${esc(u)}" target="_blank"><img class="thumb" src="${esc(u)}" alt="evidência"></a>`;
+    else s.outerHTML=`<a href="${esc(u)}" target="_blank" style="display:inline-block;margin:2px;font-weight:900">🎬 assistir vídeo</a>`;
   });
 }
 function render(){
