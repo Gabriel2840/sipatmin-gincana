@@ -47,6 +47,9 @@ create table if not exists sg_envios (
   atividade text not null,
   quantidade int not null check (quantidade > 0),
   total int not null,
+  descricao text not null default '',
+  nota_entrega int,      -- missões: nota lançada pelo admin na aprovação
+  nota_complementar int, -- missões: nota complementar (total = soma das duas)
   data date,
   local text,
   responsavel text,
