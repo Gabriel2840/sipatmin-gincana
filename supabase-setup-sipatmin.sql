@@ -50,6 +50,7 @@ create table if not exists sg_envios (
   descricao text not null default '',
   nota_entrega int,      -- missões: nota lançada pelo admin na aprovação
   nota_complementar int, -- missões: nota complementar (total = soma das duas)
+  melhor_video boolean not null default false, -- Missão 03: entre os 3 melhores (+50)
   data date,
   local text,
   responsavel text,

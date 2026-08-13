@@ -280,8 +280,24 @@ window.aprovar=async function(id){
 window.aprovarMissao=async function(id){
   const ne=Number($('ne-'+id).value),nc=Number($('nc-'+id).value||0);
   if(!$('ne-'+id).value||isNaN(ne)||ne<0||isNaN(nc)||nc<0) return alert('Informe a nota por entrega (e a complementar, se houver).');
-  const {error}=await supa.from('sg_envios').update({status:'aprovada',motivo:'',nota_entrega:ne,nota_complementar:nc,total:ne+nc}).eq('id',id);
+  const env=envios.find(x=>x.id===id);
+  const bonus=env?.melhor_video?50:0;
+  const {error}=await supa.from('sg_envios').update({status:'aprovada',motivo:'',nota_entrega:ne,nota_complementar:nc,total:ne+nc+bonus}).eq('id',id);
   if(error) return alert('Falha ao lançar as notas: '+error.message);
+  await carregar();
+};
+// Missão 03: até 3 melhores vídeos, cada um vale +50 no ranking da equipe
+window.marcarMelhorVideo=async function(id){
+  const e=envios.find(x=>x.id===id); if(!e) return;
+  const marcar=!e.melhor_video;
+  if(marcar){
+    if(e.status!=='aprovada') return alert('Aprove a missão (lançando as notas) antes de marcar como melhor vídeo.');
+    const atuais=envios.filter(x=>x.melhor_video&&x.atividade.startsWith('Missão 03')).length;
+    if(atuais>=3) return alert('Já existem 3 melhores vídeos selecionados. Desmarque um antes de escolher outro.');
+  }
+  const total=(e.nota_entrega??0)+(e.nota_complementar??0)+(marcar?50:0);
+  const {error}=await supa.from('sg_envios').update({melhor_video:marcar,total}).eq('id',id);
+  if(error) return alert('Falha ao marcar: '+error.message);
   await carregar();
 };
 window.reprovar=async function(id){
@@ -296,10 +312,10 @@ window.baixarHistorico=function(){
   if(!envios.length) return alert('Ainda não há envios registrados.');
   // CSV no padrão do Excel brasileiro: separador ";" e BOM UTF-8
   const cel=v=>{v=(v==null?'':String(v));return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const cab=['Enviado em','Grupo','Time','Enviado por','Categoria','Atividade','Descrição','Quantidade','Pontos','Nota entrega','Nota complementar','Data da atividade','Local','Responsável','Fotos','Arquivos','SharePoint','Status','Motivo'];
+  const cab=['Enviado em','Grupo','Time','Enviado por','Categoria','Atividade','Descrição','Quantidade','Pontos','Nota entrega','Nota complementar','Melhor vídeo','Data da atividade','Local','Responsável','Fotos','Arquivos','SharePoint','Status','Motivo'];
   const linhas=envios.slice().sort((a,b)=>a.ts-b.ts).map(e=>[
     new Date(e.ts).toLocaleString('pt-BR'),e.grupo,e.time,e.usuario,e.categoria,e.atividade,e.descricao||'',e.quantidade,e.total,
-    e.nota_entrega??'',e.nota_complementar??'',
+    e.nota_entrega??'',e.nota_complementar??'',e.melhor_video?'Sim (+50)':'',
     e.data||'',e.local||'',e.responsavel||'',(e.evidencias||[]).length,(e.arquivos||[]).join(' | '),e.sharepoint||'',e.status,e.motivo||''
   ].map(cel).join(';'));
   const csv='﻿'+cab.join(';')+'\n'+linhas.join('\n');
@@ -313,7 +329,7 @@ window.baixarHistorico=function(){
 function visiveis(){if(!usuarioAtual)return[];return usuarioAtual.perfil==='admin'?envios:envios.filter(e=>e.grupo===usuarioAtual.grupo&&e.time===usuarioAtual.time)}
 function ranking(){return Object.entries(grupos).map(([grupo,pessoas])=>{let aprov=envios.filter(e=>e.grupo===grupo&&e.status==='aprovada');let pontos=aprov.reduce((s,e)=>s+e.total,0);let missoesPts=aprov.filter(e=>e.categoria==='Missões').reduce((s,e)=>s+e.total,0);let times=[...new Set(usuarios.filter(u=>u.grupo===grupo&&u.perfil==='lider').map(u=>u.time))].filter(Boolean);return{grupo,pessoas,time:times[0]||grupo,pontos,missoes:missoesPts,indice:pessoas?((pontos/pessoas)*100):0}}).sort((a,b)=>b.indice-a.indice)}
 function rankHtml(rank){let max=Math.max(1,...rank.map(r=>r.indice));return rank.map((r,i)=>`<div class="rank-row"><div class="medal">${i==0?'🥇':i==1?'🥈':'🥉'}</div><div><div class="team">${i+1}º ${esc(r.time)}</div><small>${esc(r.grupo)} · ${r.pessoas} pessoas · ${r.pontos} pts aprovados · missões: ${r.missoes} pts</small><div class="progress"><i style="width:${Math.max(6,r.indice/max*100)}%"></i></div></div><div class="points">${r.indice.toFixed(1)}</div></div>`).join('')}
-function ptsHtml(e){return e.categoria==='Missões'?(e.status==='aprovada'?`${e.total}<br><span class="small">entrega ${e.nota_entrega??0} + complementar ${e.nota_complementar??0}</span>`:'—'):e.total}
+function ptsHtml(e){return e.categoria==='Missões'?(e.status==='aprovada'?`${e.total}<br><span class="small">entrega ${e.nota_entrega??0} + complementar ${e.nota_complementar??0}${e.melhor_video?' + melhor vídeo 50':''}</span>`:'—'):e.total}
 function evHtml(e,admin){
   const n=(e.evidencias||[]).length;
   const nomes=(e.arquivos||[]).map(a=>esc(a)).join('<br>');
@@ -357,13 +373,13 @@ function render(){
   $('catBox').innerHTML=cats.map(c=>{const total=vis.filter(e=>e.status==='aprovada'&&e.categoria===c).reduce((s,e)=>s+e.total,0);return `<p><b>${esc(c)}</b> <span class="small">${total} pts</span></p><div class="progress"><i style="width:${Math.min(100,Math.max(6,total/10))}%"></i></div>`}).join('');
   $('aprovacoesBox').innerHTML=envios.length?`<table><thead><tr><th>Time/Grupo</th><th>Atividade</th><th>Pontos</th><th>Evidências</th><th>Status</th><th>Ação</th></tr></thead><tbody>${envios.map(e=>{
     const acao=!admin?'Restrito':e.categoria==='Missões'
-      ?`<input type="number" min="0" id="ne-${e.id}" value="${e.nota_entrega??''}" placeholder="Nota entrega" style="width:130px"> <input type="number" min="0" id="nc-${e.id}" value="${e.nota_complementar??(e.atividade.startsWith('Missão 02')?e.quantidade:'')}" placeholder="Complementar" style="width:130px"><br><button class="navy" style="margin-top:6px" onclick="aprovarMissao(${e.id})">Lançar notas e aprovar</button> <button class="danger" style="margin-top:6px" onclick="reprovar(${e.id})">Reprovar</button>`
+      ?`<input type="number" min="0" id="ne-${e.id}" value="${e.nota_entrega??''}" placeholder="Nota entrega" style="width:130px"> <input type="number" min="0" id="nc-${e.id}" value="${e.nota_complementar??(e.atividade.startsWith('Missão 02')?e.quantidade:'')}" placeholder="Complementar" style="width:130px"><br><button class="navy" style="margin-top:6px" onclick="aprovarMissao(${e.id})">Lançar notas e aprovar</button> <button class="danger" style="margin-top:6px" onclick="reprovar(${e.id})">Reprovar</button>${e.atividade.startsWith('Missão 03')&&e.status==='aprovada'?`<br><button class="${e.melhor_video?'success':'soft'}" style="margin-top:6px" onclick="marcarMelhorVideo(${e.id})">${e.melhor_video?'🏆 Melhor vídeo (+50) · desmarcar':'🏆 Marcar melhor vídeo (+50)'}</button>`:''}`
       :`<button class="navy" onclick="aprovar(${e.id})">Aprovar</button> <button class="danger" onclick="reprovar(${e.id})">Reprovar</button>`;
     return `<tr><td><b>${esc(e.time)}</b><br><span class="small">${esc(e.grupo)}</span></td><td><b>${esc(e.atividade)}</b><br><span class="small">${esc(e.local||'')}${e.local?' · ':''}${esc(e.responsavel||'')}${e.categoria==='Missões'&&e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}</span>${e.descricao?`<br><span class="small">${esc(e.descricao)}</span>`:''}</td><td>${ptsHtml(e)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td><td>${acao}</td></tr>`;
   }).join('')}</tbody></table>`:'<div class="empty">Nenhum envio registrado.</div>';
   $('missoesRankBox').innerHTML=`<table><thead><tr><th>Equipe</th><th>Pessoas</th><th>Pontos de missões</th></tr></thead><tbody>${rank.slice().sort((a,b)=>b.missoes-a.missoes).map(r=>`<tr><td><b>${esc(r.time)}</b><br><span class="small">${esc(r.grupo)}</span></td><td>${r.pessoas}</td><td><b>${r.missoes}</b></td></tr>`).join('')}</tbody></table>`;
   const mens=vis.filter(e=>e.categoria==='Missões');
-  $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time/Grupo</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.time)}</b><br><span class="small">${esc(e.grupo)}</span></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
+  $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time/Grupo</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}${e.melhor_video?' 🏆':''}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.melhor_video?' · entre os melhores vídeos (+50)':''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.time)}</b><br><span class="small">${esc(e.grupo)}</span></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
   $('usuariosBox').innerHTML=usuarios.length?`<table><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Grupo</th><th>Time</th><th></th></tr></thead><tbody>${usuarios.map(u=>`<tr><td>${esc(u.nome)}</td><td><b>${esc(u.login)}</b></td><td>${esc(u.perfil)}</td><td>${esc(u.grupo)}</td><td>${esc(u.time)}</td><td>${admin?`<button class="danger" onclick="excluirUsuario('${esc(u.login)}')">Excluir</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum usuário ainda.</div>';
   $('evidenciasBox').innerHTML=vis.some(e=>e.evidencias?.length||e.sharepoint)?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Evidências</th><th>Status</th></tr></thead><tbody>${vis.filter(e=>e.evidencias?.length||e.sharepoint).map(e=>`<tr><td>${esc(e.time)}</td><td>${esc(e.atividade)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma evidência anexada.</div>';
   if(admin) assinarEvidencias();

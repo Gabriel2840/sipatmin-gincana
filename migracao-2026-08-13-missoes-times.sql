@@ -16,6 +16,8 @@
 alter table sg_envios add column if not exists descricao text not null default '';
 alter table sg_envios add column if not exists nota_entrega int;
 alter table sg_envios add column if not exists nota_complementar int;
+-- Missão 03: marca dos 3 melhores vídeos (+50 pts cada, lançado pelo admin)
+alter table sg_envios add column if not exists melhor_video boolean not null default false;
 
 -- 2) Renomear grupos nos perfis
 update sg_perfis set grupo = 'Guardiões da Planta'
