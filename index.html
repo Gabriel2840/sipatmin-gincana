@@ -25,7 +25,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
     <div>
       <div class="kicker">Arena da Gincana 2026</div>
       <h1>Placar oficial da SIPATMIN</h1>
-      <p class="lead">Acesso com login e senha, cadastro de líderes, nome do time, ranking proporcional e controle de evidências.</p>
+      <p class="lead">Acesso com login e senha, cadastro de líderes, ranking proporcional e controle de evidências.</p>
       <div class="login-box">
         <input id="loginUser" placeholder="Login" autocomplete="username">
         <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
@@ -47,7 +47,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 
 <section id="aprovacoes" class="section"><div class="card"><h2>Central de aprovação <button class="navy admin-only" style="float:right" onclick="baixarHistorico()">⬇ Baixar histórico (CSV)</button></h2><div id="aprovacoesBox"></div></div></section>
 
-<section id="usuarios" class="section"><div class="grid two"><div class="card"><h2>Cadastrar usuários e senhas</h2><form id="formUsuario"><label><span>Nome completo</span><input id="uNome" required placeholder="Nome do líder ou administrador"></label><label><span>Login</span><input id="uLogin" required placeholder="Ex.: lider.azul"></label><label><span>Senha</span><input id="uSenha" required type="password" minlength="6" placeholder="Crie uma senha"></label><label><span>Perfil</span><select id="uPerfil"><option value="lider">Líder da equipe</option><option value="admin">Administrador</option></select></label><label><span>Grupo base</span><select id="uGrupo"><option>Guardiões da Mina</option><option>Guardiões da Planta</option><option>Gente que Protege</option></select></label><label><span>Nome do time</span><input id="uTime" required placeholder="Ex.: Guardiões do Ouro"></label><button class="primary full" type="submit">Cadastrar usuário</button></form><p class="small">Os acessos valem para todos os aparelhos: os dados ficam num banco compartilhado e as senhas protegidas no Supabase Auth (ninguém consegue vê-las).</p></div><div class="card"><h2>Usuários cadastrados</h2><div id="usuariosBox"></div></div></div></section>
+<section id="usuarios" class="section"><div class="grid two"><div class="card"><h2>Cadastrar usuários e senhas</h2><form id="formUsuario"><label><span>Nome completo</span><input id="uNome" required placeholder="Nome do líder ou administrador"></label><label><span>Login</span><input id="uLogin" required placeholder="Ex.: lider.azul"></label><label><span>Senha</span><input id="uSenha" required type="password" minlength="6" placeholder="Crie uma senha"></label><label><span>Perfil</span><select id="uPerfil"><option value="lider">Líder da equipe</option><option value="admin">Administrador</option></select></label><label class="full"><span>Time</span><select id="uGrupo"><option>Guardiões da Mina</option><option>Guardiões da Planta</option><option>Gente que Protege</option></select></label><button class="primary full" type="submit">Cadastrar usuário</button></form><p class="small">Os acessos valem para todos os aparelhos: os dados ficam num banco compartilhado e as senhas protegidas no Supabase Auth (ninguém consegue vê-las).</p></div><div class="card"><h2>Usuários cadastrados</h2><div id="usuariosBox"></div></div></div></section>
 
 <section id="evidencias" class="section"><div class="card"><h2>Galeria de evidências</h2><div id="evidenciasBox"></div></div></section>
 
@@ -59,14 +59,13 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
     <button class="cadastro-close" onclick="fecharCadastroPublico()">×</button>
     <div class="kicker">Cadastro de líder</div>
     <h2>Criar acesso da equipe</h2>
-    <p class="small">Preencha o cadastro para criar login, senha e nome do time. O grupo será usado para o cálculo proporcional do ranking.</p>
+    <p class="small">Preencha o cadastro para criar login e senha e escolha o seu time. O time será usado para o cálculo proporcional do ranking.</p>
     <form id="formCadastroPublico">
       <label><span>Nome completo</span><input id="pNome" required placeholder="Nome do líder"></label>
       <label><span>Login</span><input id="pLogin" required placeholder="Ex.: lider.beneficiamento" pattern="[a-z0-9._-]{3,40}" title="Use letras minúsculas, números, ponto, traço ou underline (3 a 40 caracteres)"></label>
       <label><span>Senha</span><input id="pSenha" required type="password" minlength="6" placeholder="Crie uma senha (mín. 6)"></label>
       <label><span>Confirmar senha</span><input id="pSenha2" required type="password" placeholder="Repita a senha"></label>
-      <label class="full"><span>Grupo base</span><select id="pGrupo"><option>Guardiões da Mina</option><option>Guardiões da Planta</option><option>Gente que Protege</option></select></label>
-      <label class="full"><span>Nome do time</span><input id="pTime" required placeholder="Ex.: Guardiões do Ouro"></label>
+      <label class="full"><span>Time</span><select id="pGrupo"><option>Guardiões da Mina</option><option>Guardiões da Planta</option><option>Gente que Protege</option></select></label>
       <button class="primary full" type="submit">Criar cadastro e entrar</button>
     </form>
   </div>
@@ -153,7 +152,7 @@ $('formCadastroPublico').addEventListener('submit',async e=>{
   if(usuarios.some(u=>u.login===login)) return alert('Esse login já existe. Escolha outro.');
   const {data,error}=await supa.auth.signUp({email:login+DOMINIO,password:$('pSenha').value});
   if(error||!data.user) return alert('Não consegui criar o acesso: '+(error?.message||''));
-  const perfil={uid:data.user.id,nome:$('pNome').value.trim(),login,perfil:'lider',grupo:$('pGrupo').value,time_nome:$('pTime').value.trim()};
+  const perfil={uid:data.user.id,nome:$('pNome').value.trim(),login,perfil:'lider',grupo:$('pGrupo').value,time_nome:$('pGrupo').value};
   const ins=await supa.from('sg_perfis').insert(perfil);
   if(ins.error) return alert('Acesso criado, mas falhou salvar o perfil: '+ins.error.message);
   usuarioAtual={...perfil,time:perfil.time_nome};
@@ -258,7 +257,7 @@ $('formUsuario').addEventListener('submit',async e=>{
   const temp=createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data,error}=await temp.auth.signUp({email:login+DOMINIO,password:$('uSenha').value});
   if(error||!data.user) return alert('Não consegui criar o acesso: '+(error?.message||''));
-  const ins=await supa.from('sg_perfis').insert({uid:data.user.id,nome:$('uNome').value.trim(),login,perfil:$('uPerfil').value,grupo:$('uGrupo').value,time_nome:$('uTime').value.trim()});
+  const ins=await supa.from('sg_perfis').insert({uid:data.user.id,nome:$('uNome').value.trim(),login,perfil:$('uPerfil').value,grupo:$('uGrupo').value,time_nome:$('uGrupo').value});
   if(ins.error) return alert('Acesso criado, mas falhou salvar o perfil: '+ins.error.message);
   e.target.reset(); await carregar(); alert('Usuário cadastrado com sucesso.');
 });
@@ -327,8 +326,8 @@ window.baixarHistorico=function(){
 
 // ---------- ranking e telas ----------
 function visiveis(){if(!usuarioAtual)return[];return usuarioAtual.perfil==='admin'?envios:envios.filter(e=>e.grupo===usuarioAtual.grupo&&e.time===usuarioAtual.time)}
-function ranking(){return Object.entries(grupos).map(([grupo,pessoas])=>{let aprov=envios.filter(e=>e.grupo===grupo&&e.status==='aprovada');let pontos=aprov.reduce((s,e)=>s+e.total,0);let missoesPts=aprov.filter(e=>e.categoria==='Missões').reduce((s,e)=>s+e.total,0);let times=[...new Set(usuarios.filter(u=>u.grupo===grupo&&u.perfil==='lider').map(u=>u.time))].filter(Boolean);return{grupo,pessoas,time:times[0]||grupo,pontos,missoes:missoesPts,indice:pessoas?((pontos/pessoas)*100):0}}).sort((a,b)=>b.indice-a.indice)}
-function rankHtml(rank){let max=Math.max(1,...rank.map(r=>r.indice));return rank.map((r,i)=>`<div class="rank-row"><div class="medal">${i==0?'🥇':i==1?'🥈':'🥉'}</div><div><div class="team">${i+1}º ${esc(r.time)}</div><small>${esc(r.grupo)} · ${r.pessoas} pessoas · ${r.pontos} pts aprovados · missões: ${r.missoes} pts</small><div class="progress"><i style="width:${Math.max(6,r.indice/max*100)}%"></i></div></div><div class="points">${r.indice.toFixed(1)}</div></div>`).join('')}
+function ranking(){return Object.entries(grupos).map(([grupo,pessoas])=>{let aprov=envios.filter(e=>e.grupo===grupo&&e.status==='aprovada');let pontos=aprov.reduce((s,e)=>s+e.total,0);let missoesPts=aprov.filter(e=>e.categoria==='Missões').reduce((s,e)=>s+e.total,0);return{grupo,pessoas,time:grupo,pontos,missoes:missoesPts,indice:pessoas?((pontos/pessoas)*100):0}}).sort((a,b)=>b.indice-a.indice)}
+function rankHtml(rank){let max=Math.max(1,...rank.map(r=>r.indice));return rank.map((r,i)=>`<div class="rank-row"><div class="medal">${i==0?'🥇':i==1?'🥈':'🥉'}</div><div><div class="team">${i+1}º ${esc(r.time)}</div><small>${r.pessoas} pessoas · ${r.pontos} pts aprovados · missões: ${r.missoes} pts</small><div class="progress"><i style="width:${Math.max(6,r.indice/max*100)}%"></i></div></div><div class="points">${r.indice.toFixed(1)}</div></div>`).join('')}
 function ptsHtml(e){return e.categoria==='Missões'?(e.status==='aprovada'?`${e.total}<br><span class="small">entrega ${e.nota_entrega??0} + complementar ${e.nota_complementar??0}${e.melhor_video?' + melhor vídeo 50':''}</span>`:'—'):e.total}
 function evHtml(e,admin){
   const n=(e.evidencias||[]).length;
@@ -366,21 +365,21 @@ function render(){
   $('mPend').textContent=vis.filter(e=>e.status==='aguardando').length;
   $('homeRank').innerHTML=$('rankingBox').innerHTML=$('painelRanking').innerHTML=rankHtml(rank);
   $('liderPainel').textContent='Equipe líder: '+(rank[0]?.time||'-');
-  $('meuAcesso').innerHTML=usuarioAtual?`<b>Perfil:</b> ${esc(usuarioAtual.perfil)}<br><b>Grupo:</b> ${esc(usuarioAtual.grupo)}<br><b>Nome do time:</b> ${esc(usuarioAtual.time)}<br><b>Pessoas do grupo:</b> ${grupos[usuarioAtual.grupo]||'-'}`:'Faça login para registrar atividades.';
+  $('meuAcesso').innerHTML=usuarioAtual?`<b>Perfil:</b> ${esc(usuarioAtual.perfil)}<br><b>Time:</b> ${esc(usuarioAtual.grupo)}<br><b>Pessoas do time:</b> ${grupos[usuarioAtual.grupo]||'-'}`:'Faça login para registrar atividades.';
   $('ultimas').innerHTML=vis.slice(-4).reverse().map(e=>`<div class="rank-row"><div class="medal">${e.categoria==='Missões'?'🎯':'⚡'}</div><div><div class="team">${esc(e.atividade)}</div><small>${esc(e.time)} · ${e.categoria==='Missões'&&e.status!=='aprovada'?'nota pendente':e.total+' pontos'}</small></div><span class="pill ${e.status}">${e.status}</span></div>`).join('')||'<div class="empty">Nenhuma atividade cadastrada ainda.</div>';
   $('gruposBox').innerHTML=`<table><thead><tr><th>Grupo</th><th>Pessoas</th></tr></thead><tbody>${Object.entries(grupos).map(([g,p])=>`<tr><td>${esc(g)}</td><td><b>${p}</b></td></tr>`).join('')}</tbody></table>`;
   const cats=[...new Set(atividades.map(a=>a[0])),'Missões'];
   $('catBox').innerHTML=cats.map(c=>{const total=vis.filter(e=>e.status==='aprovada'&&e.categoria===c).reduce((s,e)=>s+e.total,0);return `<p><b>${esc(c)}</b> <span class="small">${total} pts</span></p><div class="progress"><i style="width:${Math.min(100,Math.max(6,total/10))}%"></i></div>`}).join('');
-  $('aprovacoesBox').innerHTML=envios.length?`<table><thead><tr><th>Time/Grupo</th><th>Atividade</th><th>Pontos</th><th>Evidências</th><th>Status</th><th>Ação</th></tr></thead><tbody>${envios.map(e=>{
+  $('aprovacoesBox').innerHTML=envios.length?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Pontos</th><th>Evidências</th><th>Status</th><th>Ação</th></tr></thead><tbody>${envios.map(e=>{
     const acao=!admin?'Restrito':e.categoria==='Missões'
       ?`<input type="number" min="0" id="ne-${e.id}" value="${e.nota_entrega??''}" placeholder="Nota entrega" style="width:130px"> <input type="number" min="0" id="nc-${e.id}" value="${e.nota_complementar??(e.atividade.startsWith('Missão 02')?e.quantidade:'')}" placeholder="Complementar" style="width:130px"><br><button class="navy" style="margin-top:6px" onclick="aprovarMissao(${e.id})">Lançar notas e aprovar</button> <button class="danger" style="margin-top:6px" onclick="reprovar(${e.id})">Reprovar</button>${e.atividade.startsWith('Missão 03')&&e.status==='aprovada'?`<br><button class="${e.melhor_video?'success':'soft'}" style="margin-top:6px" onclick="marcarMelhorVideo(${e.id})">${e.melhor_video?'🏆 Melhor vídeo (+50) · desmarcar':'🏆 Marcar melhor vídeo (+50)'}</button>`:''}`
       :`<button class="navy" onclick="aprovar(${e.id})">Aprovar</button> <button class="danger" onclick="reprovar(${e.id})">Reprovar</button>`;
-    return `<tr><td><b>${esc(e.time)}</b><br><span class="small">${esc(e.grupo)}</span></td><td><b>${esc(e.atividade)}</b><br><span class="small">${esc(e.local||'')}${e.local?' · ':''}${esc(e.responsavel||'')}${e.categoria==='Missões'&&e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}</span>${e.descricao?`<br><span class="small">${esc(e.descricao)}</span>`:''}</td><td>${ptsHtml(e)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td><td>${acao}</td></tr>`;
+    return `<tr><td><b>${esc(e.grupo)}</b></td><td><b>${esc(e.atividade)}</b><br><span class="small">${esc(e.local||'')}${e.local?' · ':''}${esc(e.responsavel||'')}${e.categoria==='Missões'&&e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}</span>${e.descricao?`<br><span class="small">${esc(e.descricao)}</span>`:''}</td><td>${ptsHtml(e)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td><td>${acao}</td></tr>`;
   }).join('')}</tbody></table>`:'<div class="empty">Nenhum envio registrado.</div>';
-  $('missoesRankBox').innerHTML=`<table><thead><tr><th>Equipe</th><th>Pessoas</th><th>Pontos de missões</th></tr></thead><tbody>${rank.slice().sort((a,b)=>b.missoes-a.missoes).map(r=>`<tr><td><b>${esc(r.time)}</b><br><span class="small">${esc(r.grupo)}</span></td><td>${r.pessoas}</td><td><b>${r.missoes}</b></td></tr>`).join('')}</tbody></table>`;
+  $('missoesRankBox').innerHTML=`<table><thead><tr><th>Equipe</th><th>Pessoas</th><th>Pontos de missões</th></tr></thead><tbody>${rank.slice().sort((a,b)=>b.missoes-a.missoes).map(r=>`<tr><td><b>${esc(r.time)}</b></td><td>${r.pessoas}</td><td><b>${r.missoes}</b></td></tr>`).join('')}</tbody></table>`;
   const mens=vis.filter(e=>e.categoria==='Missões');
-  $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time/Grupo</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}${e.melhor_video?' 🏆':''}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.melhor_video?' · entre os melhores vídeos (+50)':''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.time)}</b><br><span class="small">${esc(e.grupo)}</span></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
-  $('usuariosBox').innerHTML=usuarios.length?`<table><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Grupo</th><th>Time</th><th></th></tr></thead><tbody>${usuarios.map(u=>`<tr><td>${esc(u.nome)}</td><td><b>${esc(u.login)}</b></td><td>${esc(u.perfil)}</td><td>${esc(u.grupo)}</td><td>${esc(u.time)}</td><td>${admin?`<button class="danger" onclick="excluirUsuario('${esc(u.login)}')">Excluir</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum usuário ainda.</div>';
+  $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}${e.melhor_video?' 🏆':''}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.melhor_video?' · entre os melhores vídeos (+50)':''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.grupo)}</b></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
+  $('usuariosBox').innerHTML=usuarios.length?`<table><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Time</th><th></th></tr></thead><tbody>${usuarios.map(u=>`<tr><td>${esc(u.nome)}</td><td><b>${esc(u.login)}</b></td><td>${esc(u.perfil)}</td><td>${esc(u.grupo)}</td><td>${admin?`<button class="danger" onclick="excluirUsuario('${esc(u.login)}')">Excluir</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum usuário ainda.</div>';
   $('evidenciasBox').innerHTML=vis.some(e=>e.evidencias?.length||e.sharepoint)?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Evidências</th><th>Status</th></tr></thead><tbody>${vis.filter(e=>e.evidencias?.length||e.sharepoint).map(e=>`<tr><td>${esc(e.time)}</td><td>${esc(e.atividade)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma evidência anexada.</div>';
   if(admin) assinarEvidencias();
 }
