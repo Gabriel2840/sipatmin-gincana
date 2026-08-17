@@ -15,6 +15,34 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 .cadastro-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px}.cadastro-backdrop{position:absolute;inset:0;background:rgba(0,31,80,.55);backdrop-filter:blur(6px)}.cadastro-card{position:relative;z-index:1;width:min(760px,100%);background:#fff;border-radius:30px;padding:24px;box-shadow:0 34px 90px rgba(0,31,80,.35);border:1px solid #e7edf5;max-height:92vh;overflow:auto}.cadastro-card h2{margin:6px 0 6px;font-size:30px;color:var(--navy)}.cadastro-close{position:absolute;right:16px;top:14px;width:42px;height:42px;border-radius:14px;background:#edf3fa;color:var(--navy);font-size:26px;line-height:1;padding:0}.cadastro-card form{margin-top:14px}
 .thumb{width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid #e8eef6;margin:2px}
 @media(max-width:940px){.hero-grid,.metrics,.two,.three,.badges,.login-box{grid-template-columns:1fr}form{grid-template-columns:1fr}.app{padding:12px}.hero{padding:18px;border-radius:24px}.rank-row{grid-template-columns:56px 1fr}.points{grid-column:2;font-size:26px}}
+/* ---- Pontos por atividades ---- */
+.pa-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.pa-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-weight:800;font-size:13px;color:#1a2e55;box-shadow:0 8px 20px rgba(0,31,80,.06)}
+.pa-dot{width:13px;height:13px;border-radius:5px;flex-shrink:0}
+.pa-filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pa-ftab{background:#fff;color:#53627a;border:1px solid #e7edf5;border-radius:99px;padding:8px 16px;font-weight:800;font-size:12.5px;box-shadow:0 8px 20px rgba(0,31,80,.06);cursor:pointer}
+.pa-ftab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pa-destaque{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#0b357c 100%);border-radius:24px;padding:20px 24px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 20px 45px rgba(0,31,80,.22)}
+.pa-destaque:after{content:"";position:absolute;right:-80px;top:-90px;width:260px;height:260px;border-radius:50%;background:rgba(255,106,0,.22)}
+.pa-destaque .pa-kicker{font-size:11px;font-weight:900;letter-spacing:1.3px;text-transform:uppercase;color:#ffb27d;margin-bottom:5px}
+.pa-destaque .pa-titulo{font-size:20px;font-weight:1000;position:relative;z-index:1}
+.pa-destaque .pa-info{color:#c9d6f2;font-size:13.5px;margin-top:3px;position:relative;z-index:1}
+.pa-destaque .pa-big{position:absolute;right:26px;top:50%;transform:translateY(-50%);font-size:44px;font-weight:1000;color:var(--orange);z-index:1}
+.pa-card{background:linear-gradient(135deg,#fff,#f7f9fc);border:1px solid #e8eef6;border-radius:22px;padding:16px 18px;margin-bottom:12px}
+.pa-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.pa-nome{font-size:16px;font-weight:1000;color:var(--navy)}
+.pa-cat{font-size:10.5px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;border-radius:99px;padding:3px 11px;background:#e8effc;color:#2b4f9e}
+.pa-unit{margin-left:auto;font-size:12.5px;font-weight:800;color:var(--muted)}
+.pa-unit b{color:var(--orange);font-size:14px}
+.pa-linha{display:grid;grid-template-columns:180px 1fr 110px;align-items:center;gap:12px;padding:6px 0}
+.pa-time{font-size:13px;font-weight:800;color:#1a2e55;display:flex;align-items:center;gap:7px}
+.pa-barra{height:13px;border-radius:99px;background:#eef2f9;overflow:hidden}
+.pa-barra i{display:block;height:100%;border-radius:99px 4px 4px 99px}
+.pa-pts{text-align:right;font-size:14.5px;font-weight:1000;color:var(--navy);white-space:nowrap}
+.pa-pts small{display:block;font-weight:600;color:var(--muted);font-size:10.5px}
+.pa-linha.lider .pa-time:after{content:"🥇";font-size:13px}
+.pa-linha.lider .pa-pts{color:var(--orange)}
+@media(max-width:700px){.pa-linha{grid-template-columns:1fr;gap:3px;padding:9px 0;border-bottom:1px dashed var(--line)}.pa-linha:last-child{border-bottom:none}.pa-pts{text-align:left}.pa-destaque .pa-big{position:static;transform:none;display:block;margin-top:6px}}
 </style>
 </head>
 <body>
@@ -35,7 +63,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
     </div>
   </div>
 </section>
-<div class="tabs"><button class="tab active" onclick="show('dashboard',this)">Visão geral</button><button class="tab" onclick="show('nova',this)">Nova atividade</button><button class="tab" onclick="show('missoes',this)">Missões</button><button class="tab" onclick="show('ranking',this)">Ranking</button><button class="tab admin-only" onclick="show('aprovacoes',this)">Aprovações</button><button class="tab admin-only" onclick="show('usuarios',this)">Usuários</button><button class="tab" onclick="show('evidencias',this)">Evidências</button><button class="tab" onclick="show('painel',this)">Painel TV</button></div>
+<div class="tabs"><button class="tab active" onclick="show('dashboard',this)">Visão geral</button><button class="tab" onclick="show('nova',this)">Nova atividade</button><button class="tab" onclick="show('missoes',this)">Missões</button><button class="tab" onclick="show('ranking',this)">Ranking</button><button class="tab" onclick="show('porAtividade',this)">Pontos por atividades</button><button class="tab admin-only" onclick="show('aprovacoes',this)">Aprovações</button><button class="tab admin-only" onclick="show('usuarios',this)">Usuários</button><button class="tab" onclick="show('evidencias',this)">Evidências</button><button class="tab" onclick="show('painel',this)">Painel TV</button></div>
 
 <section id="dashboard" class="section active"><div class="grid metrics"><div class="card metric"><div class="label">Pontuação aprovada</div><div id="mPontos" class="value">0</div></div><div class="card metric"><div class="label">Índice proporcional</div><div id="mIndice" class="value">0</div></div><div class="card metric"><div class="label">Posição</div><div id="mPos" class="value">-</div></div><div class="card metric"><div class="label">Aguardando validação</div><div id="mPend" class="value">0</div></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Ranking proporcional</h2><div id="homeRank" class="rank"></div></div><div class="card"><h2>Dados do acesso</h2><div id="meuAcesso" class="note"></div><h2>Últimas atividades</h2><div id="ultimas"></div></div></div></section>
 
@@ -44,6 +72,15 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 <section id="missoes" class="section"><div class="grid two"><div class="card"><h2>Enviar missão</h2><form id="formMissao"><label class="full"><span>Missão</span><select id="missaoSel" onchange="atualizarMissaoInfo()"></select></label><label class="full"><span>Descrição da entrega</span><textarea id="mDescricao" required placeholder="Descreva o que a equipe entregou nesta missão"></textarea></label><label><span>Data</span><input id="mData" type="date" required></label><label><span>Responsável</span><input id="mResponsavel" required placeholder="Nome do responsável"></label><label id="mPartWrap" class="full hidden"><span>Quantas pessoas participaram do DDS?</span><input id="mParticipantes" type="number" min="1" value="1"></label><label class="full"><span>Evidências (fotos e vídeos de até 2 min / 45 MB)</span><input id="mEvidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="mSharepoint" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviarMissao">Enviar missão para validação</button></form></div><div class="calc"><div class="kicker">Pontuação da missão</div><h2 id="missaoNome">-</h2><p id="missaoRegra" style="color:#ffffffd9"></p><div class="big">Nota</div><p>Nota por entrega + nota complementar, lançadas pelo administrador na aprovação. A soma entra no ranking geral e também aparece no placar de missões.</p></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Placar de missões por equipe</h2><div id="missoesRankBox"></div></div><div class="card"><h2>Regulamento das missões</h2><div id="missoesRegras"></div></div></div><div class="card" style="margin-top:16px"><h2>Missões enviadas</h2><div id="missoesEnvios"></div></div></section>
 
 <section id="ranking" class="section"><div class="grid two"><div class="card"><h2>Ranking geral por índice proporcional</h2><div id="rankingBox" class="rank"></div></div><div class="card"><h2>Composição dos grupos</h2><div id="gruposBox"></div><h2>Pontos por categoria</h2><div id="catBox"></div></div></div></section>
+
+<section id="porAtividade" class="section"><div class="card">
+  <h2>Pontos por atividades</h2>
+  <p class="small" style="color:#667085;margin:2px 0 14px">Comparativo dos times em cada atividade — somente envios <b>aprovados</b>. O líder de cada atividade leva 🥇.</p>
+  <div class="pa-legend" id="paLegend"></div>
+  <div class="pa-filtros" id="paFiltros"></div>
+  <div id="paDestaque"></div>
+  <div id="paCards"></div>
+</div></section>
 
 <section id="aprovacoes" class="section"><div class="card"><h2>Central de aprovação <button class="navy admin-only" style="float:right" onclick="baixarHistorico()">⬇ Baixar histórico (CSV)</button></h2><div id="aprovacoesBox"></div></div></section>
 
@@ -413,6 +450,43 @@ async function assinarEvidencias(){
 }
 let filtroAprov='todos';
 window.filtrarAprov=function(v){ filtroAprov=v; render(); };
+// ---------- pontos por atividades ----------
+// cores fixas por time (ordem de `grupos`); validadas para daltonismo sobre fundo claro
+const CORES_TIMES=['#3560B0','#12B76A','#FF6A00','#7A5AF8'];
+function corDoTime(g){const i=Object.keys(grupos).indexOf(g);return CORES_TIMES[i]||'#98A2B3'}
+let filtroPA='Todas';
+window.filtrarPA=function(c){ filtroPA=c; render(); };
+function liderDe(a){const t=Object.keys(grupos).slice().sort((x,y)=>(a.porTime[y]||0)-(a.porTime[x]||0))[0];return `${t} (${a.porTime[t]||0} pts)`}
+function renderPorAtividade(){
+  const times=Object.keys(grupos);
+  const aprov=envios.filter(e=>e.status==='aprovada');
+  const mapa={};
+  aprov.forEach(e=>{
+    const k=e.categoria+'|'+e.atividade;
+    if(!mapa[k]){mapa[k]={categoria:e.categoria,atividade:e.atividade,porTime:{},qtd:{}}}
+    mapa[k].porTime[e.grupo]=(mapa[k].porTime[e.grupo]||0)+(Number(e.total)||0);
+    mapa[k].qtd[e.grupo]=(mapa[k].qtd[e.grupo]||0)+(Number(e.quantidade)||0);
+  });
+  // aparece toda atividade em que pelo menos um time pontuou
+  let lista=Object.values(mapa).map(a=>({...a,total:times.reduce((s,t)=>s+(a.porTime[t]||0),0)})).filter(a=>a.total>0).sort((x,y)=>y.total-x.total);
+  $('paLegend').innerHTML=times.map(t=>`<span class="pa-chip"><span class="pa-dot" style="background:${corDoTime(t)}"></span>${esc(t)}</span>`).join('');
+  const cats=['Todas',...new Set(lista.map(a=>a.categoria))];
+  if(!cats.includes(filtroPA)) filtroPA='Todas';
+  $('paFiltros').innerHTML=cats.map(c=>`<button class="pa-ftab${filtroPA===c?' active':''}" onclick="filtrarPA('${esc(c)}')">${esc(c)}</button>`).join('');
+  const top=lista[0];
+  $('paDestaque').innerHTML=top?`<div class="pa-destaque"><div class="pa-kicker">⚡ Atividade que mais pontua na gincana</div><div class="pa-titulo">${esc(top.atividade)}</div><div class="pa-info">${top.total} pontos somados · líder: ${esc(liderDe(top))}</div><div class="pa-big">${top.total}</div></div>`:'';
+  if(filtroPA!=='Todas') lista=lista.filter(a=>a.categoria===filtroPA);
+  $('paCards').innerHTML=lista.length?lista.map(a=>{
+    const max=Math.max(1,...times.map(t=>a.porTime[t]||0));
+    const ordem=times.slice().sort((x,y)=>(a.porTime[y]||0)-(a.porTime[x]||0));
+    const info=atividades.find(x=>x[1]===a.atividade);
+    const linhas=ordem.map((t,i)=>{
+      const p=a.porTime[t]||0,q=a.qtd[t]||0,lider=i===0&&p>0;
+      return `<div class="pa-linha${lider?' lider':''}"><span class="pa-time"><span class="pa-dot" style="background:${corDoTime(t)}"></span>${esc(t)}</span><div class="pa-barra"><i style="background:${corDoTime(t)};width:${p?Math.max(4,p/max*100):0}%"></i></div><div class="pa-pts">${p} pts<small>${q?'qtd: '+q:(p?'':'sem pontos')}</small></div></div>`;
+    }).join('');
+    return `<div class="pa-card"><div class="pa-head"><span class="pa-nome">${esc(a.atividade)}</span><span class="pa-cat">${esc(a.categoria)}</span>${info?`<span class="pa-unit"><b>${info[2]}</b> pts/unidade</span>`:''}</div>${linhas}</div>`;
+  }).join(''):'<div class="empty">Nenhuma atividade aprovada ainda'+(filtroPA!=='Todas'?' nesta categoria':'')+'.</div>';
+}
 function render(){
   const admin=usuarioAtual&&usuarioAtual.perfil==='admin';
   atualizarCalculo(); // painel de pontuação acompanha o time do usuário logado
@@ -444,6 +518,7 @@ function render(){
   $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}${e.melhor_video?' 🏆':''}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.melhor_video?' · entre os melhores vídeos (+50)':''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.grupo)}</b><br><span class="small">por ${esc(quemEnviou(e))}</span></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
   $('usuariosBox').innerHTML=usuarios.length?`<table><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Time</th><th></th></tr></thead><tbody>${usuarios.map(u=>`<tr><td>${esc(u.nome)}</td><td><b>${esc(u.login)}</b></td><td>${esc(u.perfil)}</td><td>${esc(u.grupo)}</td><td>${admin?`<button class="danger" onclick="excluirUsuario('${esc(u.login)}')">Excluir</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum usuário ainda.</div>';
   $('evidenciasBox').innerHTML=vis.some(e=>e.evidencias?.length||e.sharepoint)?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Evidências</th><th>Status</th></tr></thead><tbody>${vis.filter(e=>e.evidencias?.length||e.sharepoint).map(e=>`<tr><td>${esc(e.time)}<br><span class="small">por ${esc(quemEnviou(e))}</span></td><td>${esc(e.atividade)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma evidência anexada.</div>';
+  renderPorAtividade();
   if(admin) assinarEvidencias();
 }
 
