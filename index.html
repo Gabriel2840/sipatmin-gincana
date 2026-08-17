@@ -75,7 +75,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 
 <section id="porAtividade" class="section"><div class="card">
   <h2>Pontos por atividades</h2>
-  <p class="small" style="color:#667085;margin:2px 0 14px">Comparativo dos times em cada atividade — somente envios <b>aprovados</b>. O líder de cada atividade leva 🥇.</p>
+  <p class="small" style="color:#667085;margin:2px 0 14px">Comparativo dos times em cada atividade — somente envios <b>aprovados</b>, com a mesma ponderação do ranking: <b>pontos ÷ pessoas do time × 100</b> (missões contam direto). O líder de cada atividade leva 🥇.</p>
   <div class="pa-legend" id="paLegend"></div>
   <div class="pa-filtros" id="paFiltros"></div>
   <div id="paDestaque"></div>
@@ -456,7 +456,10 @@ const CORES_TIMES=['#3560B0','#12B76A','#FF6A00','#7A5AF8'];
 function corDoTime(g){const i=Object.keys(grupos).indexOf(g);return CORES_TIMES[i]||'#98A2B3'}
 let filtroPA='Todas';
 window.filtrarPA=function(c){ filtroPA=c; render(); };
-function liderDe(a){const t=Object.keys(grupos).slice().sort((x,y)=>(a.porTime[y]||0)-(a.porTime[x]||0))[0];return `${t} (${a.porTime[t]||0} pts)`}
+// mesma ponderação do ranking: atividades = pontos ÷ pessoas do time × 100; missões contam direto
+function pesoPA(cat,t,pts){return cat==='Missões'?pts:(grupos[t]?pts/grupos[t]*100:0)}
+function fmtPA(v){return (Math.round(v*10)/10).toLocaleString('pt-BR',{maximumFractionDigits:1})}
+function liderDe(a){const t=Object.keys(grupos).slice().sort((x,y)=>(a.ind[y]||0)-(a.ind[x]||0))[0];return `${t} (${fmtPA(a.ind[t]||0)} pts)`}
 function renderPorAtividade(){
   const times=Object.keys(grupos);
   const aprov=envios.filter(e=>e.status==='aprovada');
@@ -467,22 +470,25 @@ function renderPorAtividade(){
     mapa[k].porTime[e.grupo]=(mapa[k].porTime[e.grupo]||0)+(Number(e.total)||0);
     mapa[k].qtd[e.grupo]=(mapa[k].qtd[e.grupo]||0)+(Number(e.quantidade)||0);
   });
-  // aparece toda atividade em que pelo menos um time pontuou
-  let lista=Object.values(mapa).map(a=>({...a,total:times.reduce((s,t)=>s+(a.porTime[t]||0),0)})).filter(a=>a.total>0).sort((x,y)=>y.total-x.total);
+  // aparece toda atividade em que pelo menos um time pontuou; comparação pelo valor ponderado
+  let lista=Object.values(mapa).map(a=>{
+    const ind={};times.forEach(t=>ind[t]=pesoPA(a.categoria,t,a.porTime[t]||0));
+    return {...a,ind,total:times.reduce((s,t)=>s+ind[t],0),bruto:times.reduce((s,t)=>s+(a.porTime[t]||0),0)};
+  }).filter(a=>a.bruto>0).sort((x,y)=>y.total-x.total);
   $('paLegend').innerHTML=times.map(t=>`<span class="pa-chip"><span class="pa-dot" style="background:${corDoTime(t)}"></span>${esc(t)}</span>`).join('');
   const cats=['Todas',...new Set(lista.map(a=>a.categoria))];
   if(!cats.includes(filtroPA)) filtroPA='Todas';
   $('paFiltros').innerHTML=cats.map(c=>`<button class="pa-ftab${filtroPA===c?' active':''}" onclick="filtrarPA('${esc(c)}')">${esc(c)}</button>`).join('');
   const top=lista[0];
-  $('paDestaque').innerHTML=top?`<div class="pa-destaque"><div class="pa-kicker">⚡ Atividade que mais pontua na gincana</div><div class="pa-titulo">${esc(top.atividade)}</div><div class="pa-info">${top.total} pontos somados · líder: ${esc(liderDe(top))}</div><div class="pa-big">${top.total}</div></div>`:'';
+  $('paDestaque').innerHTML=top?`<div class="pa-destaque"><div class="pa-kicker">⚡ Atividade que mais pontua na gincana</div><div class="pa-titulo">${esc(top.atividade)}</div><div class="pa-info">${fmtPA(top.total)} pontos ponderados somados (${top.bruto} brutos) · líder: ${esc(liderDe(top))}</div><div class="pa-big">${fmtPA(top.total)}</div></div>`:'';
   if(filtroPA!=='Todas') lista=lista.filter(a=>a.categoria===filtroPA);
   $('paCards').innerHTML=lista.length?lista.map(a=>{
-    const max=Math.max(1,...times.map(t=>a.porTime[t]||0));
-    const ordem=times.slice().sort((x,y)=>(a.porTime[y]||0)-(a.porTime[x]||0));
+    const max=Math.max(1,...times.map(t=>a.ind[t]||0));
+    const ordem=times.slice().sort((x,y)=>(a.ind[y]||0)-(a.ind[x]||0));
     const info=atividades.find(x=>x[1]===a.atividade);
     const linhas=ordem.map((t,i)=>{
-      const p=a.porTime[t]||0,q=a.qtd[t]||0,lider=i===0&&p>0;
-      return `<div class="pa-linha${lider?' lider':''}"><span class="pa-time"><span class="pa-dot" style="background:${corDoTime(t)}"></span>${esc(t)}</span><div class="pa-barra"><i style="background:${corDoTime(t)};width:${p?Math.max(4,p/max*100):0}%"></i></div><div class="pa-pts">${p} pts<small>${q?'qtd: '+q:(p?'':'sem pontos')}</small></div></div>`;
+      const v=a.ind[t]||0,p=a.porTime[t]||0,q=a.qtd[t]||0,lider=i===0&&v>0;
+      return `<div class="pa-linha${lider?' lider':''}"><span class="pa-time"><span class="pa-dot" style="background:${corDoTime(t)}"></span>${esc(t)}</span><div class="pa-barra"><i style="background:${corDoTime(t)};width:${v?Math.max(4,v/max*100):0}%"></i></div><div class="pa-pts">${fmtPA(v)} pts<small>${p?p+' brutos'+(q?' · qtd: '+q:''):'sem pontos'}</small></div></div>`;
     }).join('');
     return `<div class="pa-card"><div class="pa-head"><span class="pa-nome">${esc(a.atividade)}</span><span class="pa-cat">${esc(a.categoria)}</span>${info?`<span class="pa-unit"><b>${info[2]}</b> pts/unidade</span>`:''}</div>${linhas}</div>`;
   }).join(''):'<div class="empty">Nenhuma atividade aprovada ainda'+(filtroPA!=='Todas'?' nesta categoria':'')+'.</div>';
