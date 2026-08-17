@@ -39,7 +39,7 @@ form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label span{displa
 
 <section id="dashboard" class="section active"><div class="grid metrics"><div class="card metric"><div class="label">Pontuação aprovada</div><div id="mPontos" class="value">0</div></div><div class="card metric"><div class="label">Índice proporcional</div><div id="mIndice" class="value">0</div></div><div class="card metric"><div class="label">Posição</div><div id="mPos" class="value">-</div></div><div class="card metric"><div class="label">Aguardando validação</div><div id="mPend" class="value">0</div></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Ranking proporcional</h2><div id="homeRank" class="rank"></div></div><div class="card"><h2>Dados do acesso</h2><div id="meuAcesso" class="note"></div><h2>Últimas atividades</h2><div id="ultimas"></div></div></div></section>
 
-<section id="nova" class="section"><div class="grid two"><div class="card"><h2>Registrar atividade</h2><form id="formAtividade"><label><span>Categoria</span><select id="categoria" onchange="carregarAtividades()"></select></label><label><span>Atividade</span><select id="atividade" onchange="atualizarCalculo()"></select></label><label class="full"><span>Descrição</span><textarea id="descricao" required placeholder="Descreva a ação realizada e o resultado obtido"></textarea></label><label><span>Quantidade</span><input id="quantidade" type="number" min="1" value="1" oninput="atualizarCalculo()"></label><label><span>Data</span><input id="data" type="date" required></label><label><span>Local</span><input id="local" required placeholder="Ex.: Mina, Beneficiamento, Administrativo"></label><label><span>Responsável</span><input id="responsavel" required placeholder="Nome do responsável"></label><label class="full"><span>Evidências (fotos e vídeos de até 2 min / 45 MB)</span><input id="evidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="sharepointLink" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviar">Enviar para validação</button></form></div><div class="calc"><div class="kicker">Pontuação automática</div><h2 id="calcNome">-</h2><p>Quantidade x valor da atividade ÷ pessoas do time x 100</p><div class="big" id="calcTotal">0</div><p id="calcDetalhe"></p><p style="color:#ffffffb8">Este é o valor que a atividade vale no ranking do seu time. Só entra no placar após aprovação do administrador.</p></div></div></section>
+<section id="nova" class="section"><div class="grid two"><div class="card"><h2>Registrar atividade</h2><form id="formAtividade"><label><span>Categoria</span><select id="categoria" onchange="carregarAtividades()"></select></label><label><span>Atividade</span><select id="atividade" onchange="atualizarCalculo()"></select></label><label class="full"><span>Descrição</span><textarea id="descricao" required placeholder="Descreva a ação realizada e o resultado obtido"></textarea></label><label><span>Quantidade</span><input id="quantidade" type="number" min="1" value="1" oninput="atualizarCalculo()"></label><label><span>Data</span><input id="data" type="date" required></label><label><span>Local</span><input id="local" required placeholder="Ex.: Mina, Beneficiamento, Administrativo"></label><label><span>Responsável</span><input id="responsavel" required placeholder="Nome do responsável"></label><label class="full"><span>Evidências (fotos e vídeos de até 2 min / 45 MB)</span><input id="evidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="sharepointLink" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviar">Enviar para validação</button></form></div><div class="calc"><div class="kicker">Pontuação automática</div><h2 id="calcNome">-</h2><p>Quantidade x valor da atividade ÷ pessoas do time x 100</p><div class="big" id="calcTotal">0</div><p id="calcDetalhe"></p><p style="color:#ffffffb8">Este é o valor que a atividade vale no ranking do seu time. Só entra no placar após aprovação do administrador.</p></div></div><div class="card admin-only" style="margin-top:18px;width:100%"><h2>Pontuação atividade extraordinária</h2><p class="small">Visível somente para o administrador. O lançamento vai para a aba Aprovações e só entra no placar depois de aprovado, para manter o registro.</p><form id="formExtra"><label><span>Grupo que recebe os pontos</span><select id="exGrupo"></select></label><label><span>Pontos</span><input id="exPontos" type="number" min="1" required placeholder="Ex.: 50"></label><label><span>Data</span><input id="exData" type="date" required></label><label class="full"><span>Motivo / descrição da atividade extraordinária</span><textarea id="exMotivo" required placeholder="Descreva a atividade extraordinária e o motivo da pontuação"></textarea></label><button class="navy full" type="submit" id="btnExtra">Lançar para aprovação</button></form></div></section>
 
 <section id="missoes" class="section"><div class="grid two"><div class="card"><h2>Enviar missão</h2><form id="formMissao"><label class="full"><span>Missão</span><select id="missaoSel" onchange="atualizarMissaoInfo()"></select></label><label class="full"><span>Descrição da entrega</span><textarea id="mDescricao" required placeholder="Descreva o que a equipe entregou nesta missão"></textarea></label><label><span>Data</span><input id="mData" type="date" required></label><label><span>Responsável</span><input id="mResponsavel" required placeholder="Nome do responsável"></label><label id="mPartWrap" class="full hidden"><span>Quantas pessoas participaram do DDS?</span><input id="mParticipantes" type="number" min="1" value="1"></label><label class="full"><span>Evidências (fotos e vídeos de até 2 min / 45 MB)</span><input id="mEvidencia" type="file" multiple accept="image/*,.pdf,video/*,.doc,.docx,.xls,.xlsx"></label><label class="full"><span>Link da pasta SharePoint da evidência</span><input id="mSharepoint" placeholder="Cole aqui o link da pasta/arquivo no SharePoint, quando houver"></label><button class="primary full" type="submit" id="btnEnviarMissao">Enviar missão para validação</button></form></div><div class="calc"><div class="kicker">Pontuação da missão</div><h2 id="missaoNome">-</h2><p id="missaoRegra" style="color:#ffffffd9"></p><div class="big">Nota</div><p>Nota por entrega + nota complementar, lançadas pelo administrador na aprovação. A soma entra no ranking geral e também aparece no placar de missões.</p></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h2>Placar de missões por equipe</h2><div id="missoesRankBox"></div></div><div class="card"><h2>Regulamento das missões</h2><div id="missoesRegras"></div></div></div><div class="card" style="margin-top:16px"><h2>Missões enviadas</h2><div id="missoesEnvios"></div></div></section>
 
@@ -279,6 +279,27 @@ $('formMissao').addEventListener('submit',async e=>{
   finally{ btn.disabled=false;btn.textContent='Enviar missão para validação'; }
 });
 
+// ---------- pontuação extraordinária (só admin; passa pela aprovação p/ ficar registrada) ----------
+$('formExtra').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!usuarioAtual||usuarioAtual.perfil!=='admin') return alert('Apenas o administrador pode lançar pontuação extraordinária.');
+  const btn=$('btnExtra');btn.disabled=true;btn.textContent='Lançando…';
+  try{
+    const id=Date.now();
+    const grupo=$('exGrupo').value;
+    const envio={id,ts:id,uid:usuarioAtual.uid,grupo,time_nome:grupo,usuario:usuarioAtual.nome,
+      categoria:'Extraordinária',atividade:'Pontuação extraordinária',quantidade:1,total:Number($('exPontos').value),
+      data:$('exData').value,local:'',responsavel:usuarioAtual.nome,descricao:$('exMotivo').value.trim(),
+      evidencias:[],arquivos:[],sharepoint:'',status:'aguardando',motivo:''};
+    const ins=await supa.from('sg_envios').insert(envio);
+    if(ins.error) throw new Error(ins.error.message);
+    e.target.reset();
+    await carregar();
+    alert('Pontuação extraordinária lançada. Aprove na aba Aprovações para entrar no placar.');
+  }catch(err){ alert('Não consegui lançar: '+err.message); }
+  finally{ btn.disabled=false;btn.textContent='Lançar para aprovação'; }
+});
+
 // ---------- cadastro pelo admin (aba Usuários) ----------
 // Usa um cliente isolado para o signUp não derrubar a sessão do admin.
 $('formUsuario').addEventListener('submit',async e=>{
@@ -390,6 +411,8 @@ async function assinarEvidencias(){
     else s.outerHTML=`<a href="${esc(u)}" target="_blank" style="display:inline-block;margin:2px;font-weight:900">🎬 assistir vídeo</a>`;
   });
 }
+let filtroAprov='todos';
+window.filtrarAprov=function(v){ filtroAprov=v; render(); };
 function render(){
   const admin=usuarioAtual&&usuarioAtual.perfil==='admin';
   atualizarCalculo(); // painel de pontuação acompanha o time do usuário logado
@@ -406,14 +429,16 @@ function render(){
   $('meuAcesso').innerHTML=usuarioAtual?`<b>Perfil:</b> ${esc(usuarioAtual.perfil)}<br><b>Time:</b> ${esc(usuarioAtual.grupo)}<br><b>Pessoas do time:</b> ${grupos[usuarioAtual.grupo]||'-'}`:'Faça login para registrar atividades.';
   $('ultimas').innerHTML=vis.slice(-4).reverse().map(e=>`<div class="rank-row"><div class="medal">${e.categoria==='Missões'?'🎯':'⚡'}</div><div><div class="team">${esc(e.atividade)}</div><small>${esc(e.time)} · ${e.categoria==='Missões'&&e.status!=='aprovada'?'nota pendente':e.total+' pontos'}</small></div><span class="pill ${e.status}">${e.status}</span></div>`).join('')||'<div class="empty">Nenhuma atividade cadastrada ainda.</div>';
   $('gruposBox').innerHTML=`<table><thead><tr><th>Grupo</th><th>Pessoas</th></tr></thead><tbody>${Object.entries(grupos).map(([g,p])=>`<tr><td>${esc(g)}</td><td><b>${p}</b></td></tr>`).join('')}</tbody></table>`;
-  const cats=[...new Set(atividades.map(a=>a[0])),'Missões'];
+  const cats=[...new Set(atividades.map(a=>a[0])),'Missões',...(vis.some(e=>e.categoria==='Extraordinária')?['Extraordinária']:[])];
   $('catBox').innerHTML=cats.map(c=>{const total=vis.filter(e=>e.status==='aprovada'&&e.categoria===c).reduce((s,e)=>s+e.total,0);return `<p><b>${esc(c)}</b> <span class="small">${total} pts</span></p><div class="progress"><i style="width:${Math.min(100,Math.max(6,total/10))}%"></i></div>`}).join('');
-  $('aprovacoesBox').innerHTML=envios.length?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Pontos</th><th>Evidências</th><th>Status</th><th>Ação</th></tr></thead><tbody>${envios.map(e=>{
+  const enviosFiltrados=filtroAprov==='todos'?envios:envios.filter(e=>e.grupo===filtroAprov);
+  const filtroHtml=`<div style="margin-bottom:12px"><label class="small" style="font-weight:900;letter-spacing:.5px;margin-right:8px">FILTRAR POR GRUPO</label><select onchange="filtrarAprov(this.value)" style="max-width:280px;display:inline-block;width:auto">${['todos',...Object.keys(grupos)].map(g=>`<option value="${esc(g)}"${filtroAprov===g?' selected':''}>${g==='todos'?'Todos':esc(g)}</option>`).join('')}</select></div>`;
+  $('aprovacoesBox').innerHTML=filtroHtml+(enviosFiltrados.length?`<table><thead><tr><th>Time</th><th>Atividade</th><th>Pontos</th><th>Evidências</th><th>Status</th><th>Ação</th></tr></thead><tbody>${enviosFiltrados.map(e=>{
     const acao=!admin?'Restrito':e.categoria==='Missões'
       ?`<input type="number" min="0" id="ne-${e.id}" value="${e.nota_entrega??''}" placeholder="Nota entrega" style="width:130px"> <input type="number" min="0" id="nc-${e.id}" value="${e.nota_complementar??(e.atividade.startsWith('Missão 02')?e.quantidade:'')}" placeholder="Complementar" style="width:130px"><br><button class="navy" style="margin-top:6px" onclick="aprovarMissao(${e.id})">Lançar notas e aprovar</button> <button class="danger" style="margin-top:6px" onclick="reprovar(${e.id})">Reprovar</button>${e.atividade.startsWith('Missão 03')&&e.status==='aprovada'?`<br><button class="${e.melhor_video?'success':'soft'}" style="margin-top:6px" onclick="marcarMelhorVideo(${e.id})">${e.melhor_video?'🏆 Melhor vídeo (+50) · desmarcar':'🏆 Marcar melhor vídeo (+50)'}</button>`:''}`
       :`<button class="navy" onclick="aprovar(${e.id})">Aprovar</button> <button class="danger" onclick="reprovar(${e.id})">Reprovar</button>`;
     return `<tr><td><b>${esc(e.grupo)}</b><br><span class="small">por ${esc(quemEnviou(e))}</span></td><td><b>${esc(e.atividade)}</b><br><span class="small">${esc(e.local||'')}${e.local?' · ':''}${esc(e.responsavel||'')}${e.categoria==='Missões'&&e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}</span>${e.descricao?`<br><span class="small">${esc(e.descricao)}</span>`:''}</td><td>${ptsHtml(e)}</td><td>${evHtml(e,admin)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td><td>${acao}</td></tr>`;
-  }).join('')}</tbody></table>`:'<div class="empty">Nenhum envio registrado.</div>';
+  }).join('')}</tbody></table>`:'<div class="empty">Nenhum envio registrado.</div>');
   $('missoesRankBox').innerHTML=`<table><thead><tr><th>Equipe</th><th>Pessoas</th><th>Pontos de missões</th></tr></thead><tbody>${rank.slice().sort((a,b)=>b.missoes-a.missoes).map(r=>`<tr><td><b>${esc(r.time)}</b></td><td>${r.pessoas}</td><td><b>${r.missoes}</b></td></tr>`).join('')}</tbody></table>`;
   const mens=vis.filter(e=>e.categoria==='Missões');
   $('missoesEnvios').innerHTML=mens.length?`<table><thead><tr><th>Missão</th><th>Time</th><th>Evidências</th><th>Notas</th><th>Status</th></tr></thead><tbody>${mens.slice().reverse().map(e=>`<tr><td><b>${esc(e.atividade)}${e.melhor_video?' 🏆':''}</b><br><span class="small">${esc(e.responsavel||'')}${e.quantidade>1?` · ${e.quantidade} participantes do DDS`:''}${e.melhor_video?' · entre os melhores vídeos (+50)':''}${e.descricao?' · '+esc(e.descricao):''}</span></td><td><b>${esc(e.grupo)}</b><br><span class="small">por ${esc(quemEnviou(e))}</span></td><td>${evHtml(e,admin)}</td><td>${ptsHtml(e)}</td><td><span class="pill ${e.status}">${e.status}</span>${e.motivo?'<br>'+esc(e.motivo):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhuma missão enviada ainda.</div>';
@@ -425,6 +450,7 @@ function render(){
 // ---------- start ----------
 carregarCategorias();
 carregarMissoes();
+$('exGrupo').innerHTML=Object.keys(grupos).map(g=>`<option>${esc(g)}</option>`).join('');
 render();
 await restaurarSessao();
 await carregar();
