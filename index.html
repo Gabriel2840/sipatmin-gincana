@@ -535,7 +535,10 @@ $('exGrupo').innerHTML=Object.keys(grupos).map(g=>`<option>${esc(g)}</option>`).
 render();
 await restaurarSessao();
 await carregar();
-setInterval(carregar,30000); // painel TV e placar ao vivo
+// Painel TV e placar: atualiza a cada 5 min e só com a aba visível
+// (abas em segundo plano não consomem egress; ao voltar, atualiza na hora)
+setInterval(()=>{ if(!document.hidden) carregar(); },300000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) carregar(); });
 </script>
 </body>
 </html>
